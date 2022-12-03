@@ -176,7 +176,7 @@ Node leftRotate(Node x) {
     }
     void preOrder(Node node) {
         if (node != null) {
-            System.out.println(node.Sno+ " "+node.BookName+ " "+node.Author+ " "+node.UserRating+ " "+node.Reviews+ " "+node.Price+ " "+node.Genre+ " "+node.Source+ " "+node.PurchaseRatio + " ");
+            System.out.println("[Sno]: "+node.Sno+ " [Book Name]: "+node.BookName+ " [Author]: "+node.Author+ " [User Rating]: "+node.UserRating+ " [Reviews]: "+node.Reviews+ " [Price]: "+node.Price+ " [Genre]: "+node.Genre+ " [Source]: "+node.Source+ " [Purchase Rate]: "+node.PurchaseRatio + " ");
             preOrder(node.left);
             preOrder(node.right);
         }
