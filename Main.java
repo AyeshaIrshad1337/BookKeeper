@@ -1,7 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
-
 class general{
     String[][] extract(String A[]){
          int k=0;
@@ -18,6 +17,7 @@ class general{
             sp[i][6]=splitted[6];
             sp[i][7]=splitted[7];
             sp[i][8]=splitted[8];
+
 
         }
         return sp;
@@ -57,6 +57,7 @@ class general{
             Array[i][3]=max(Float.parseFloat(A[i][3]),Float.parseFloat(B[i][3]),Float.parseFloat(C[i][3]));
             Array[i][4]=max(Integer.parseInt(A[i][4]),Integer.parseInt(B[i][4]),Integer.parseInt(C[i][4]));
             Array[i][8]=max(Integer.parseInt(A[i][8]),Integer.parseInt(B[i][8]),Integer.parseInt(C[i][8]));
+            //Minimum price of book in comparison of other resources
             float m=Float.parseFloat(A[i][5]);
             Array[i][7]=A[i][7];
             if(m>Float.parseFloat(B[i][5])){ m=Float.parseFloat(B[i][5]); Array[i][7]=B[i][7];}
@@ -71,6 +72,7 @@ class general{
         return Array;
     }
 }
+public class Main {
 
     class Node{
         String BookName,Author,Source,Genre;
@@ -91,9 +93,7 @@ class general{
             this.Sno=Sno;
         }
 
-    }
-class Book{
-    Node root;
+    }   Node root;
     int height(Node N) {
         if (N == null)
             return 0;
@@ -175,107 +175,14 @@ Node leftRotate(Node x) {
 
         return node;
     }
-    void preOrder(Node node) {
+    void InOrder(Node node) {
         if (node != null) {
-            System.out.println("[Sno]: "+node.Sno+ " [Book Name]: "+node.BookName+ " [Author]: "+node.Author+ " [User Rating]: "+node.UserRating+ " [Reviews]: "+node.Reviews+ " [Price]: "+node.Price+ " [Genre]: "+node.Genre+ " [Source]: "+node.Source+ " [Purchase Rate]: "+node.PurchaseRatio + " ");
-            preOrder(node.left);
-            preOrder(node.right);
+            InOrder(node.left);
+            System.out.println("[SNo]: "+node.Sno+ " [Book Name]: "+node.BookName+ " [Author]: "+node.Author+ " [User Rating]: "+node.UserRating+ " [Number Of Reviews]:  "+node.Reviews+ " [Price]: "+node.Price+ " [Genre]:  "+node.Genre+ " [Sources]:  "+node.Source+ " [Purchasing Ratio]:  "+node.PurchaseRatio + " ");
+            InOrder(node.right);
         }
     }
-}
-class recommendation  {
 
-        public void Purchase(Node root, String name, Node book){
-            if (root == null){
-                return;
-            }
-
-            if (root.BookName.equals(name)){
-                //System.out.println(root.Genre);
-                TopBest(book, root.Genre);
-                //printBook(root);
-
-            }
-            Purchase(root.left, name, book);
-            Purchase(root.right, name, book);
-        }
-        public void TopBest(Node root){
-            if (root == null){
-                return;
-            }
-            if (root.UserRating >= 4.5f && root.PurchaseRatio >= 85){
-                printBook(root);
-            }
-            TopBest(root.left);
-            TopBest(root.right);
-        }
-    public void TopBest(Node root, String genre){
-        if (root == null){
-            return;
-        }
-        if (root.UserRating >= 4.5f && root.PurchaseRatio >= 85 && root.Genre.equals(genre)){
-            printBook(root);
-        }
-        TopBest(root.left, genre);
-        TopBest(root.right, genre);
-    }
-        public void printBook(Node root){
-            if (root == null){
-                System.out.println("empty");
-            }
-            System.out.println("[Sno]: "+root.Sno+ " [Book Name]: "+root.BookName+ " [Author]: "+root.Author+ " [User Rating]: "+root.UserRating+ " [Reviews]: "+root.Reviews+ " [Price]: "+root.Price+ " [Genre]: "+root.Genre+ " [Source]: "+root.Source+ " [Purchase Rate]: "+root.PurchaseRatio + " ");
-        }
-}
-class Filter{
-    Node fiction, NonFiction, TopRating;
-    public Node Fiction(Node root){
-        if (root == null){
-            return null;
-        }
-        if (root.Genre.equals("Fiction") ){
-            fiction =  Fiction(root.left);
-            fiction = Fiction(root.right);
-        }
-        Fiction(root.left);
-        Fiction(root.right);
-     return fiction;
-    }
-    public Node NonFiction(Node root){
-        if (root == null){
-            return null;
-        }
-
-        if (root.Genre.equals("Non Fiction") ){
-            NonFiction = NonFiction(root.left);
-            NonFiction = NonFiction(root.right);
-        }
-        NonFiction(root.left);
-        NonFiction(root.right);
-    return NonFiction;
-    }
-    public Node BestRating(Node root){
-        if (root == null){
-            return null;
-        }
-        if (root.UserRating > 4.5){
-            TopRating = BestRating(root.left);
-            TopRating = BestRating(root.right);
-        }
-        BestRating(root.left);
-        BestRating(root.right);
-     return TopRating;
-    }
-}
-class Purchased{
-    int count = 0;
-    public void Purchased(Node root){
-        if (root == null){
-            return;
-        }
-        System.out.println("purchased successfully");
-    }
-}
-public class Main {
     public static void main(String[] args) throws FileNotFoundException {
 
        general obj= new general();
@@ -286,28 +193,12 @@ public class Main {
         String[] C= obj.filing("ZStore.csv");
         String sp2[][]=obj.extract(C);
         String sp[][]=obj.Fi(sp0,sp1,sp2);
-        Book o = new Book();
+        Main o= new Main();
         Node n = null;
         for (int j = 0; j < 49; j++) {
             n=o.insert(n,Integer.parseInt(sp[j][0]),sp[j][1],sp[j][2],Float.parseFloat(sp[j][3]), Integer.parseInt(sp[j][4]),Float.parseFloat(sp[j][5]),sp[j][6],sp[j][7],Integer.parseInt(sp[j][8]));
 
         }
-     //  o.preOrder(n);
-        recommendation ob = new recommendation();
-        ob.Purchase(n, "Born to Run", n);
-        ob.TopBest(n);
-        ob.TopBest(n, "Non Fiction");
-//        Filter sort = new Filter();
-//        Node Fiction = sort.Fiction(n);
-//        Node NonFiction = sort.NonFiction(n);
-//        Node topRating = sort.BestRating(n);
-//        System.out.println(" fictional ");
-//        o.preOrder(Fiction);
-//        System.out.println(" Non fictional ");
-//        o.preOrder(NonFiction);
-//        System.out.println("top rating ");
-//        o.preOrder(topRating);
-        Node root1 = n;
-     //   o.preOrder(root1);
+       o.InOrder(n);
     }
 }
