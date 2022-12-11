@@ -1,7 +1,148 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.HashSet;
 import java.util.Scanner;
 class general{
+    public HashSet<Node> o=null;
+
+    public void setO(HashSet<Node> o) {
+        this.o = o;
+    }
+
+    void search(HashSet<Node> book){
+        int choice =0;
+        Scanner sc =new Scanner(System.in);
+        Search search=new Search();
+        System.out.println(" \n(1)By Author Name \n(2)By Book Name \n(3)Back\n(4)Exit");
+        HashSet<Node> a;
+        choice = sc.nextInt();
+        String result;
+        switch (choice) {
+            case 1:
+                System.out.print("Enter Author Name or any Alphabet that is in Author Name: ");
+                String author = sc.next();
+                a=search.AuthorName(book, author);
+                System.out.println(search.AuthorName(book, author));
+                System.out.print("Do you want its Recommadation(y/if no enter anything): ");
+                result = sc.next();
+                if(result.equals("y")){recommend(a);}
+                else{
+                    BAckExit();
+                }break;
+            case 2:
+
+                System.out.print("Enter Book Name or any Alphabet that is in Author Name: ");
+                String BookName = sc.next();
+                a=search.BookName(book, BookName);
+                System.out.println(search.BookName(book, BookName));
+                System.out.print("Do you want its Recommadation(y/if no enter anything): ");
+                result = sc.next();
+                if(result.equals("y")){recommend(a);}
+                else{
+
+                    BAckExit();
+                }
+                break;
+            case 3:
+                    recommendSearch(book);
+                break;
+            case 4:
+                System.exit(0);
+                break;
+        }
+    }
+    void opt(){
+        HashSet<Node>book=filter(o);
+        recommendSearch(book);
+    }
+    void recommendSearch(HashSet<Node> book){
+        Scanner sc = new Scanner(System.in);
+
+        int choice=0;
+        System.out.println("Select One of the Choices: \n(1)Search \n(2)Recommadation\n(3)Back\n(4)Exit");
+        do {
+            System.out.print("Enter your choice: ");
+            choice = sc.nextInt();
+        } while (choice < 1 || choice > 3);
+        switch (choice) {
+            case 1:
+                search(book);
+                break;
+            case 2:
+                recommend(book);
+                break;
+            case 3:
+                filter(book);
+                break;
+            case 4:
+                System.exit(0);
+                break;
+        }
+    }
+    void recommend(HashSet<Node> book){
+        recommendation recommendation =new recommendation();
+        System.out.println(recommendation.TopBest(book));
+        BAckExit();
+
+    }
+    HashSet<Node> filter(HashSet<Node> o){
+
+        HashSet<Node> book=null;
+        Filter filter = new Filter();
+        Scanner sc = new Scanner(System.in);
+        int choice =0,numberofBooks=0;
+        System.out.println("Select One of the Choices: \n(1)Fiction \n(2)Non Fiction\n(3)Both\n(4)Exit");
+        do {
+            System.out.print("Enter your choice: ");
+            choice = sc.nextInt();
+        } while (choice < 1 || choice > 4);
+        switch (choice) {
+            case 1:
+                System.out.println("Total Books of Fiction: " + filter.Fiction(o).size());
+                System.out.print("How many book you are willing to buy: ");
+                numberofBooks = sc.nextInt();
+                book = new HashSet<>();
+                book.addAll(filter.Fiction(o, numberofBooks));
+                System.out.println();
+                System.out.print(book);
+
+                break;
+            case 2:
+                System.out.println("Total Books of Non Fiction: " + filter.NonFiction(o).size());
+                System.out.print("How many book you are willing to buy: ");
+                numberofBooks = sc.nextInt();
+                book = new HashSet<>();
+                book.addAll(filter.NonFiction(o, numberofBooks));
+                System.out.print(book);
+                break;
+            case 3:
+                System.out.println("Total Books of Both: " + filter.Both(o).size());
+                System.out.print("How many book you are willing to buy: ");
+                numberofBooks = sc.nextInt();
+                book = new HashSet<>();
+                book.addAll(filter.Both(o, numberofBooks));
+                System.out.print(book);
+                break;
+            case 4:
+                System.exit(0);
+                break;
+        }
+    return book;
+    }
+
+    void BAckExit(){
+        Scanner sc = new Scanner(System.in);
+        int choice;
+        do {
+            System.out.println("Do you want to (1)Go back or (2)exit");
+            choice = sc.nextInt();
+        }while(choice != 1 && choice != 2);
+        if(choice==1){
+            opt();
+        } else if (choice==2) {
+            System.exit(0);
+        }
+    }
     String[][] extract(String A[]){
          int k=0;
         String[][] sp=new String[49][9];
@@ -17,7 +158,6 @@ class general{
             sp[i][6]=splitted[6];
             sp[i][7]=splitted[7];
             sp[i][8]=splitted[8];
-
 
         }
         return sp;
@@ -57,7 +197,6 @@ class general{
             Array[i][3]=max(Float.parseFloat(A[i][3]),Float.parseFloat(B[i][3]),Float.parseFloat(C[i][3]));
             Array[i][4]=max(Integer.parseInt(A[i][4]),Integer.parseInt(B[i][4]),Integer.parseInt(C[i][4]));
             Array[i][8]=max(Integer.parseInt(A[i][8]),Integer.parseInt(B[i][8]),Integer.parseInt(C[i][8]));
-            //Minimum price of book in comparison of other resources
             float m=Float.parseFloat(A[i][5]);
             Array[i][7]=A[i][7];
             if(m>Float.parseFloat(B[i][5])){ m=Float.parseFloat(B[i][5]); Array[i][7]=B[i][7];}
@@ -71,8 +210,8 @@ class general{
         }
         return Array;
     }
+
 }
-public class Main {
 
     class Node{
         String BookName,Author,Source,Genre;
@@ -81,7 +220,7 @@ public class Main {
 
         Node left, right;
         Node(int Sno,String BookName,String Author,float UserRating,int Reviews,float Price,String Genre,String Source,int PurchaseRatio){
-            this.BookName = BookName;
+             this.BookName = BookName;
             this.Author=Author;
             this.Source = Source;
             this.Genre = Genre;
@@ -93,112 +232,234 @@ public class Main {
             this.Sno=Sno;
         }
 
-    }   Node root;
-    int height(Node N) {
-        if (N == null)
-            return 0;
+        public String getBookName() {
+            return BookName;
+        }
 
-        return N.height;
+        public String getAuthor() {
+            return Author;
+        }
+
+        public String getSource() {
+            return Source;
+        }
+
+        public String getGenre() {
+            return Genre;
+        }
+
+        public float getUserRating() {
+            return UserRating;
+        }
+
+        public float getPrice() {
+            return Price;
+        }
+
+        public int getReviews() {
+            return Reviews;
+        }
+
+        public int getPurchaseRatio() {
+            return PurchaseRatio;
+        }
+
+        public int getSno() {
+            return Sno;
+        }
+
+        public String toString()
+        {
+            return "[Sno]: " +this.Sno+" \n[Book Name]: "+this.BookName+ " \n[Author]: "+this.Author+ " \n[User Rating]: "+this.UserRating+ " \n[Reviews]: "+this.Reviews+ " \n[Price]: "+this.Price+ " \n[Genre]: "+this.Genre+ " \n[Source]: "+this.Source+ " \n[Purchase Rate]: "+this.PurchaseRatio + "\n----------------------------------------------------------------------------------------------------------------\n";
+        }
+
     }
-    int max(int a, int b) {
-        return (a > b) ? a : b;
-    }
-    Node rightRotate(Node y) {
-        Node x = y.left;
-        Node T2 = x.right;
 
-        // Perform rotation
-        x.right = y;
-        y.left = T2;
+class recommendation  {
 
-        // Update heights
-        y.height = max(height(y.left), height(y.right)) + 1;
-        x.height = max(height(x.left), height(x.right)) + 1;
 
-        // Return new root
-        return x;
-    }
-Node leftRotate(Node x) {
-    Node y = x.right;
-    Node T2 = y.left;
+        public HashSet<Node> TopBest(HashSet<Node> root){
+            HashSet<Node> Top=new HashSet<>();
+            int i=1;
+            for (Node node:root){
+                if(node.getUserRating()>=4.5f&& node.getPurchaseRatio() >= 85){
+                    Top.add(node);
+                    i++;
+                }
+            }
+            return Top;
+        }
 
-    // Perform rotation
-    y.left = x;
-    x.right = T2;
-
-    // Update heights
-    x.height = max(height(x.left), height(x.right)) + 1;
-    y.height = max(height(y.left), height(y.right)) + 1;
-
-    // Return new root
-    return y;
 }
-    int getBalance(Node N) {
-        if (N == null)
-            return 0;
-
-        return height(N.left) - height(N.right);
-    }
-    Node insert(Node node,int Sno,String BookName,String Author,float UserRating,int Reviews,float Price,String Genre,String Source,int PurchaseRatio) {
-
-           if (node == null)
-            return (new Node(Sno,BookName,Author,UserRating,Reviews,Price,Genre,Source,PurchaseRatio));
-
-        if (Sno < node.Sno)
-            node.left = insert(node.left, Sno,BookName,Author,UserRating,Reviews,Price,Genre,Source,PurchaseRatio);
-        else if (Sno > node.Sno)
-            node.right = insert(node.right,Sno,BookName,Author,UserRating,Reviews,Price,Genre,Source,PurchaseRatio);
-        else // Duplicate keys not allowed
-            return node;
-
-        node.height = 1 + max(height(node.left),
-                height(node.right));
-
-        int balance = getBalance(node);
-
-        if (balance > 1 && Sno < node.left.Sno)
-            return rightRotate(node);
-
-        // Right Right Case
-        if (balance < -1 && Sno > node.right.Sno)
-            return leftRotate(node);
-
-        if (balance > 1 && Sno > node.left.Sno) {
-            node.left = leftRotate(node.left);
-            return rightRotate(node);
+class Filter{
+    HashSet<Node> Fiction (HashSet<Node> root){
+        HashSet<Node> fiction= new HashSet<>();
+           for (Node node:root){
+            if(node.getGenre().equals("Fiction")){
+                fiction.add(node);
+            }
         }
-
-        if (balance < -1 && Sno < node.right.Sno) {
-            node.right = rightRotate(node.right);
-            return leftRotate(node);
-        }
-
-        return node;
+        return fiction;
     }
-    void InOrder(Node node) {
-        if (node != null) {
-            InOrder(node.left);
-            System.out.println("[SNo]: "+node.Sno+ " [Book Name]: "+node.BookName+ " [Author]: "+node.Author+ " [User Rating]: "+node.UserRating+ " [Number Of Reviews]:  "+node.Reviews+ " [Price]: "+node.Price+ " [Genre]:  "+node.Genre+ " [Sources]:  "+node.Source+ " [Purchasing Ratio]:  "+node.PurchaseRatio + " ");
-            InOrder(node.right);
+   HashSet<Node> Fiction (HashSet<Node> root,int NumberOfBOOks){
+       HashSet<Node> fiction= new HashSet<>();
+        int i=1;
+       for (Node node:root){
+           if(node.getGenre().equals("Fiction")&&NumberOfBOOks>=i){
+               fiction.add(node);
+                i++;
+           }
+       }
+       return fiction;
+   }
+
+    HashSet<Node> NonFiction (HashSet<Node> root){
+        HashSet<Node> Nonfiction= new HashSet<>();
+        for (Node node:root){
+            if(node.getGenre().equals("Non Fiction")){
+                Nonfiction.add(node);
+            }
+        }
+        return Nonfiction;
+    }
+    HashSet<Node> NonFiction (HashSet<Node> root,int NumberOfBOOks){
+        HashSet<Node> Nonfiction= new HashSet<>();
+        int i =1;
+        for (Node node:root){
+            if(node.getGenre().equals("Non Fiction")&&NumberOfBOOks>=i){
+                Nonfiction.add(node);
+                i++;
+            }
+        }
+        return Nonfiction;
+    }
+    HashSet<Node> Both(HashSet<Node> root){
+        HashSet<Node> Both= new HashSet<>();
+        for (Node node:root){
+
+                Both.add(node);
+
+
+        }
+        return Both;
+
+    }
+    HashSet<Node> Both(HashSet<Node> root,int NumberOfBOOks){
+    HashSet<Node> Both= new HashSet<>();
+    int i =1;
+    for (Node node:root){
+        if(NumberOfBOOks>=i){
+            Both.add(node);
+            i++;
         }
     }
+    return Both;
+
+}
+       HashSet<Node> RatingFilter (HashSet<Node> root,double rating,int NumberOfBOOks){
+           HashSet<Node> Rate= new HashSet<>();
+           int i=1;
+           for (Node node:root){
+               if(node.getUserRating()>=rating&&NumberOfBOOks>=i){
+                   Rate.add(node);
+                   i++;
+               }
+           }
+           return Rate;
+       }
+       HashSet<Node> SourceUrduBazar (HashSet<Node> root, int NumberOfBOOks){
+       HashSet<Node> UB= new HashSet<>();
+       int i=1;
+       for(Node node: root){
+           if(node.getSource().equals("Urdu Bazar")&&NumberOfBOOks>=i){
+               UB.add(node);
+               i++;
+           }
+       }
+       return UB;
+       }
+
+    HashSet<Node> SourceAmazon (HashSet<Node> root, int NumberOfBOOks){
+        HashSet<Node> Amazzon= new HashSet<>();
+        int i =1;
+        for(Node node: root){
+            if(node.getSource().equals("Amazon")&&NumberOfBOOks>=i){
+                Amazzon.add(node);
+                i++;
+            }
+        }
+        return Amazzon;
+    }
+    HashSet<Node> SourceZstore (HashSet<Node> root, int NumberOfBOOks){
+        HashSet<Node> Zstore= new HashSet<>();
+       int i =1;
+        for(Node node: root){
+            if(node.getSource().equals("Zstore") && NumberOfBOOks>=i){
+                Zstore.add(node);
+                i++;
+            }
+        }
+        return Zstore;
+    }
+}
+class Search{
+//    char[] StringToChar(String str){
+//        char[] ch= new char[str.length()];
+//        for (int i = 0; i < str.length(); i++) {
+//            ch[i] = str.charAt(i);
+//        }
+//        return ch;
+//    }
+ HashSet<Node> AuthorName(HashSet<Node> root, String str){
+        HashSet<Node> AuthorName=new HashSet<>();
+
+        for (Node node:root){
+                if(node.getAuthor().contains(str)){
+                    AuthorName.add(node);
+                }
+
+
+            }
+        return AuthorName;
+ }
+    HashSet<Node> BookName(HashSet<Node> root, String str){
+        HashSet<Node> BookName=new HashSet<>();
+        for (Node node:root){
+
+                if(node.getBookName().contains(str)){
+                    BookName.add(node);
+            }
+        }
+        return BookName;
+    }
+}
+public class Main {
+
 
     public static void main(String[] args) throws FileNotFoundException {
+        general obj = new general();
+        recommendation recommendation = new recommendation();
 
-       general obj= new general();
-       String[] A= obj.filing("amazon.csv");
-       String sp0[][]=obj.extract(A);
-        String[] B= obj.filing("UrduBazar.csv");
-        String sp1[][]=obj.extract(B);
-        String[] C= obj.filing("ZStore.csv");
-        String sp2[][]=obj.extract(C);
-        String sp[][]=obj.Fi(sp0,sp1,sp2);
-        Main o= new Main();
-        Node n = null;
+        Search search = new Search();
+        Scanner sc = new Scanner(System.in);
+        String[] A = obj.filing("amazon.csv");
+        String sp0[][] = obj.extract(A);
+        String[] B = obj.filing("UrduBazar.csv");
+        String sp1[][] = obj.extract(B);
+        String[] C = obj.filing("ZStore.csv");
+        String sp2[][] = obj.extract(C);
+        String sp[][] = obj.Fi(sp0, sp1, sp2);
+        HashSet<Node> o = new HashSet<>();
+
         for (int j = 0; j < 49; j++) {
-            n=o.insert(n,Integer.parseInt(sp[j][0]),sp[j][1],sp[j][2],Float.parseFloat(sp[j][3]), Integer.parseInt(sp[j][4]),Float.parseFloat(sp[j][5]),sp[j][6],sp[j][7],Integer.parseInt(sp[j][8]));
-
+            o.add(new Node(Integer.parseInt(sp[j][0]), sp[j][1], sp[j][2], Float.parseFloat(sp[j][3]), Integer.parseInt(sp[j][4]), Float.parseFloat(sp[j][5]), sp[j][6], sp[j][7], Integer.parseInt(sp[j][8])));
         }
-       o.InOrder(n);
+        int numberofBooks = 0, choice = 0;
+        HashSet<Node> book = null;
+        obj.setO(o);
+        System.out.println("---------------------------------------------------------------------------------\n|\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t Welcome To BookKeeper\n|\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t|\n---------------------------------------------------------------------------------");
+              obj.opt();
+
+
     }
 }
