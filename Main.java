@@ -19,6 +19,7 @@ class general{
 
         do {
             System.out.println(" \n(1)By Author Name \n(2)By Book Name\n(3)Back\n(4)Exit");
+            System.out.print("Enter your choice: ");
             choice = sc.nextInt();
         }while(choice<1 || choice>4);
 
@@ -28,6 +29,7 @@ class general{
                 System.out.print("Enter Author Name or any Alphabet that is in Author Name: ");
                 String author = sc.next();
                 a=search.AuthorName(book, author);
+                if(a==null){BAckExit();}
                 System.out.println(search.AuthorName(book, author));
                 System.out.print("Do you want its Recommadation(y/if no enter anything): ");
                 result = sc.next();
@@ -40,6 +42,7 @@ class general{
                 System.out.print("Enter Book Name or any Alphabet that is in Author Name: ");
                 String BookName = sc.next();
                 a=search.BookName(book, BookName);
+                if(a==null){BAckExit();}
                 System.out.println(search.BookName(book, BookName));
                 System.out.print("Do you want its Recommadation(y/if no enter anything): ");
                 result = sc.next();
@@ -329,7 +332,7 @@ class general{
 
         public String toString()
         {
-            return "[Sno]: " +this.Sno+" \n[Book Name]: "+this.BookName+ " \n[Author]: "+this.Author+ " \n[User Rating]: "+this.UserRating+ " \n[Reviews]: "+this.Reviews+ " \n[Price]: "+this.Price+ " \n[Genre]: "+this.Genre+ " \n[Source]: "+this.Source+ " \n[Purchase Rate]: "+this.PurchaseRatio + "\n----------------------------------------------------------------------------------------------------------------\n";
+            return "\n[Sno]: " +this.Sno+" \n[Book Name]: "+this.BookName+ " \n[Author]: "+this.Author+ " \n[User Rating]: "+this.UserRating+ " \n[Reviews]: "+this.Reviews+ " \n[Price]: "+this.Price+ " \n[Genre]: "+this.Genre+ " \n[Source]: "+this.Source+ " \n[Purchase Rate]: "+this.PurchaseRatio + "\n----------------------------------------------------------------------------------------------------------------\n";
         }
 
     }
@@ -511,7 +514,7 @@ class Search{
 //        return ch;
 //    }
  HashSet<Node> AuthorName(HashSet<Node> root, String str){
-        HashSet<Node> AuthorName=new HashSet<>();
+        HashSet<Node> AuthorName=null;
 
         for (Node node:root){
                 if(node.getAuthor().contains(str)){
@@ -523,7 +526,7 @@ class Search{
         return AuthorName;
  }
     HashSet<Node> BookName(HashSet<Node> root, String str){
-        HashSet<Node> BookName=new HashSet<>();
+        HashSet<Node> BookName=null;
         for (Node node:root){
 
                 if(node.getBookName().contains(str)){
