@@ -4,7 +4,9 @@ import java.util.HashSet;
 import java.util.Scanner;
 class general{
     public HashSet<Node> o=null;
-
+    void display(HashSet<Node> root){
+        System.out.println(root);
+    }
     public void setO(HashSet<Node> o) {
         this.o = o;
     }
@@ -13,9 +15,13 @@ class general{
         int choice =0;
         Scanner sc =new Scanner(System.in);
         Search search=new Search();
-        System.out.println(" \n(1)By Author Name \n(2)By Book Name \n(3)Back\n(4)Exit");
         HashSet<Node> a;
-        choice = sc.nextInt();
+
+        do {
+            System.out.println(" \n(1)By Author Name \n(2)By Book Name\n(3)Back\n(4)Exit");
+            choice = sc.nextInt();
+        }while(choice<1 || choice>4);
+
         String result;
         switch (choice) {
             case 1:
@@ -59,11 +65,11 @@ class general{
         Scanner sc = new Scanner(System.in);
 
         int choice=0;
-        System.out.println("Select One of the Choices: \n(1)Search \n(2)Recommadation\n(3)Back\n(4)Exit");
+        System.out.println("Select One of the Choices: \n(1)Search \n(2)Recommadation\n(3) Display Books \n(4)Back\n(5)Exit");
         do {
             System.out.print("Enter your choice: ");
             choice = sc.nextInt();
-        } while (choice < 1 || choice > 3);
+        } while (choice < 1 || choice > 4);
         switch (choice) {
             case 1:
                 search(book);
@@ -72,9 +78,13 @@ class general{
                 recommend(book);
                 break;
             case 3:
-                filter(book);
+                display(book);
+                BAckExit();
                 break;
             case 4:
+                filter(book);
+                break;
+            case 5:
                 System.exit(0);
                 break;
         }
@@ -85,22 +95,37 @@ class general{
         BAckExit();
 
     }
+    int check(int size){
+       Scanner sc =new Scanner(System.in);
+        int numberofBooks=0;
+        if (size == 0){
+            BAckExit();
+        }
+        System.out.print("How many book you are willing to buy: ");
+        numberofBooks = sc.nextInt();
+        if(numberofBooks==0){
+            BAckExit();
+        }
+        return numberofBooks;
+    }
     HashSet<Node> filter(HashSet<Node> o){
 
         HashSet<Node> book=null;
         Filter filter = new Filter();
         Scanner sc = new Scanner(System.in);
         int choice =0,numberofBooks=0;
-        System.out.println("Select One of the Choices: \n(1)Fiction \n(2)Non Fiction\n(3)Both\n(4)Exit");
+        int size=0;
+        double rating=0;
+        System.out.println("Select One of the Choices: \n(1)Fiction \n(2)Non Fiction\n(3)Amazon Book\n(4)Urdu Bazar\n(5)ZStore\n(6)Rating Factor \n(7)All\n(8)Exit");
         do {
             System.out.print("Enter your choice: ");
             choice = sc.nextInt();
-        } while (choice < 1 || choice > 4);
+        } while (choice < 1 || choice > 8);
         switch (choice) {
             case 1:
-                System.out.println("Total Books of Fiction: " + filter.Fiction(o).size());
-                System.out.print("How many book you are willing to buy: ");
-                numberofBooks = sc.nextInt();
+                size=filter.Fiction(o).size();
+                System.out.println("Total Books of Fiction: " + size);
+                numberofBooks =check(size);
                 book = new HashSet<>();
                 book.addAll(filter.Fiction(o, numberofBooks));
                 System.out.println();
@@ -108,22 +133,56 @@ class general{
 
                 break;
             case 2:
-                System.out.println("Total Books of Non Fiction: " + filter.NonFiction(o).size());
-                System.out.print("How many book you are willing to buy: ");
-                numberofBooks = sc.nextInt();
+                size=filter.NonFiction(o).size();
+                System.out.println("Total Books of Non Fiction: " + size);
+                numberofBooks = check(size);
                 book = new HashSet<>();
                 book.addAll(filter.NonFiction(o, numberofBooks));
                 System.out.print(book);
                 break;
             case 3:
-                System.out.println("Total Books of Both: " + filter.Both(o).size());
-                System.out.print("How many book you are willing to buy: ");
-                numberofBooks = sc.nextInt();
+                size =filter.SourceAmazon(o).size();
+                System.out.println("Total Books of Amazon Book: " + size);
+               numberofBooks= check(size);
+        book = new HashSet<>();
+                book.addAll(filter.SourceAmazon(o, numberofBooks));
+                System.out.print(book);
+                break;
+            case 4:
+                size=filter.SourceUrduBazar(o).size();
+                System.out.println("Total Books of Urdu Bazar Book: " + size);
+                 numberofBooks = check(size);
+                book = new HashSet<>();
+                book.addAll(filter.SourceUrduBazar(o, numberofBooks));
+                System.out.print(book);
+                break;
+            case 5:
+                size=filter.SourceZstore(o).size();
+                System.out.println("Total Books of ZStore Book: " + size);
+                numberofBooks = check(size);
+                book = new HashSet<>();
+                book.addAll(filter.SourceZstore(o, numberofBooks));
+                System.out.print(book);
+                break;
+            case 6:
+                System.out.println("Enter the book rating: ");
+                rating = sc.nextDouble();
+                size=filter.RatingFilter(o, rating).size();
+                System.out.println("Total Books of having that rating are : " + size);
+                numberofBooks = check(size);
+                book = new HashSet<>();
+                book.addAll(filter.RatingFilter(o,rating,numberofBooks));
+                System.out.print(book);
+                break;
+            case 7:
+                size=filter.Both(o).size();
+                System.out.println("Total Books of Both: " + size);
+                numberofBooks = check(size);
                 book = new HashSet<>();
                 book.addAll(filter.Both(o, numberofBooks));
                 System.out.print(book);
                 break;
-            case 4:
+            case 8:
                 System.exit(0);
                 break;
         }
@@ -356,7 +415,7 @@ class Filter{
     return Both;
 
 }
-       HashSet<Node> RatingFilter (HashSet<Node> root,double rating,int NumberOfBOOks){
+HashSet<Node> RatingFilter (HashSet<Node> root,double rating,int NumberOfBOOks){
            HashSet<Node> Rate= new HashSet<>();
            int i=1;
            for (Node node:root){
@@ -367,6 +426,18 @@ class Filter{
            }
            return Rate;
        }
+
+    HashSet<Node> RatingFilter (HashSet<Node> root,double rating){
+        HashSet<Node> Rate= new HashSet<>();
+        int i=1;
+        for (Node node:root){
+            if(node.getUserRating()>=rating){
+                Rate.add(node);
+                i++;
+            }
+        }
+        return Rate;
+    }
        HashSet<Node> SourceUrduBazar (HashSet<Node> root, int NumberOfBOOks){
        HashSet<Node> UB= new HashSet<>();
        int i=1;
@@ -379,6 +450,15 @@ class Filter{
        return UB;
        }
 
+    HashSet<Node> SourceUrduBazar (HashSet<Node> root){
+        HashSet<Node> UB= new HashSet<>();
+        for(Node node: root){
+            if(node.getSource().equals("Urdu Bazar")){
+                UB.add(node);
+            }
+        }
+        return UB;
+    }
     HashSet<Node> SourceAmazon (HashSet<Node> root, int NumberOfBOOks){
         HashSet<Node> Amazzon= new HashSet<>();
         int i =1;
@@ -390,6 +470,16 @@ class Filter{
         }
         return Amazzon;
     }
+
+    HashSet<Node> SourceAmazon (HashSet<Node> root){
+        HashSet<Node> Amazzon= new HashSet<>();
+        for(Node node: root){
+            if(node.getSource().equals("Amazon")){
+                Amazzon.add(node);
+            }
+        }
+        return Amazzon;
+    }
     HashSet<Node> SourceZstore (HashSet<Node> root, int NumberOfBOOks){
         HashSet<Node> Zstore= new HashSet<>();
        int i =1;
@@ -397,6 +487,16 @@ class Filter{
             if(node.getSource().equals("Zstore") && NumberOfBOOks>=i){
                 Zstore.add(node);
                 i++;
+            }
+        }
+        return Zstore;
+    }
+
+    HashSet<Node> SourceZstore (HashSet<Node> root){
+        HashSet<Node> Zstore= new HashSet<>();
+        for(Node node: root){
+            if(node.getSource().equals("Zstore") ){
+                Zstore.add(node);
             }
         }
         return Zstore;
