@@ -1,7 +1,69 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Scanner;
+class Items{
+    String BookName,Author,Source,Genre;
+    float UserRating;
+    int Reviews,PurchaseRatio,Price,Sno;
+
+    Items(int Sno,String BookName,String Author,float UserRating,int Reviews,int Price,String Genre,String Source,int PurchaseRatio){
+        this.BookName = BookName;
+        this.Author=Author;
+        this.Source = Source;
+        this.Genre = Genre;
+        this.Price = Price;
+        this.UserRating= UserRating;
+        this.PurchaseRatio = PurchaseRatio;
+        this.Reviews = Reviews;
+
+        this.Sno=Sno;
+    }
+
+    public String getBookName() {
+        return BookName;
+    }
+
+    public String getAuthor() {
+        return Author;
+    }
+
+    public String getSource() {
+        return Source;
+    }
+
+    public String getGenre() {
+        return Genre;
+    }
+
+    public float getUserRating() {
+        return UserRating;
+    }
+
+    public float getPrice() {
+        return Price;
+    }
+
+    public int getReviews() {
+        return Reviews;
+    }
+
+    public int getPurchaseRatio() {
+        return PurchaseRatio;
+    }
+
+    public int getSno() {
+        return Sno;
+    }
+
+    public String toString()
+    {
+        return "\n[Sno]: " +this.Sno+" \n[Book Name]: "+this.BookName+ " \n[Author]: "+this.Author+ " \n[User Rating]: "+this.UserRating+ " \n[Reviews]: "+this.Reviews+ " \n[Price]: "+this.Price+ " \n[Genre]: "+this.Genre+ " \n[Source]: "+this.Source+ " \n[Purchase Rate]: "+this.PurchaseRatio + "\n----------------------------------------------------------------------------------------------------------------\n";
+    }
+
+}
+
 class general{
     public HashSet<Node> o=null;
     void display(HashSet<Node> root){
@@ -95,7 +157,9 @@ class general{
     void recommend(HashSet<Node> book){
         recommendation recommendation =new recommendation();
         System.out.println(recommendation.TopBest(book));
-        BAckExit();
+        System.out.println("\n\nRecommendation on Basis of Score : \n\n\n");
+        recommendation.RecommanderScore(book);
+        BAckExitSearchRecommand(book);
 
     }
     int check(int size){
@@ -201,6 +265,21 @@ class general{
         }while(choice != 1 && choice != 2);
         if(choice==1){
             opt();
+        } else if (choice==2) {
+            System.exit(0);
+        }
+    }
+
+    void BAckExitSearchRecommand(HashSet<Node> book){
+
+        Scanner sc = new Scanner(System.in);
+        int choice;
+        do {
+            System.out.println("Do you want to (1)Go back or (2)exit");
+            choice = sc.nextInt();
+        }while(choice != 1 && choice != 2);
+        if(choice==1){
+            recommendSearch(book);
         } else if (choice==2) {
             System.exit(0);
         }
@@ -336,8 +415,54 @@ class general{
         }
 
     }
+class re{
+    Node Book;
+    double score;
+    re(Node Book, double score){
+        this.Book=Book;
+        this.score=score;
+    }
 
+    @Override
+    public String toString() {
+        return ", score=" + score +
+                "Book=" + Book;
+    }
+}
 class recommendation  {
+        void RecommanderScore(HashSet<Node> book){
+           Scanner sc = new Scanner(System.in);
+           int choice=0,n=0;
+            ArrayList<re> result = new ArrayList<>();
+            for(Node root:book){
+                double score = root.UserRating * Math.log(root.Reviews + 1);
+                re recomander = new re(root,score);
+                result.add(recomander);
+            }
+            result.sort((r1, r2) -> Double.compare(r2.score, r1.score));
+            System.out.println("Choose anyone : \n(1)Score of all Books \n(2)Score on few books ");
+            do{
+                System.out.println("Enter your choice: ");
+                choice = sc.nextInt();
+
+            }while(choice != 1 && choice !=2);
+            switch(choice){
+                case 1:
+
+                    for(re recomander : result){
+                        System.out.println(recomander);
+                    }break;
+                case 2:
+                    System.out.println("If you dont want any recommandation just enter any negative value i.e -1");
+                    System.out.println("Enter the numbers of books: ");
+                    n=sc.nextInt();
+
+                    for(int i=0;i<=n;i++){
+                        if(i== result.size()){break;}
+                        System.out.println(result.get(i));
+                    }
+                    break;
+            } }
 
 
         public HashSet<Node> TopBest(HashSet<Node> root){
@@ -541,8 +666,6 @@ public class Main {
 
     public static void main(String[] args) throws FileNotFoundException {
         general obj = new general();
-        recommendation recommendation = new recommendation();
-
         Search search = new Search();
         Scanner sc = new Scanner(System.in);
         String[] A = obj.filing("amazon.csv");
@@ -553,15 +676,17 @@ public class Main {
         String sp2[][] = obj.extract(C);
         String sp[][] = obj.Fi(sp0, sp1, sp2);
         HashSet<Node> o = new HashSet<>();
-
+        Items[] node = new Items[49];
         for (int j = 0; j < 49; j++) {
+            node[j]= new Items(Integer.parseInt(sp[j][0]),sp[j][1], sp[j][2], Float.parseFloat(sp[j][3]), Integer.parseInt(sp[j][4]), (int)Float.parseFloat(sp[j][5]), sp[j][6], sp[j][7], Integer.parseInt(sp[j][8]));
             o.add(new Node(Integer.parseInt(sp[j][0]), sp[j][1], sp[j][2], Float.parseFloat(sp[j][3]), Integer.parseInt(sp[j][4]), Float.parseFloat(sp[j][5]), sp[j][6], sp[j][7], Integer.parseInt(sp[j][8])));
         }
         int numberofBooks = 0, choice = 0;
         HashSet<Node> book = null;
         obj.setO(o);
         System.out.println("---------------------------------------------------------------------------------\n|\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t Welcome To BookKeeper\n|\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t|\n---------------------------------------------------------------------------------");
-              obj.opt();
+
+        obj.opt();
 
 
     }
