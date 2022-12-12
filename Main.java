@@ -3,66 +3,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Scanner;
-class Items{
-    String BookName,Author,Source,Genre;
-    float UserRating;
-    int Reviews,PurchaseRatio,Price,Sno;
 
-    Items(int Sno,String BookName,String Author,float UserRating,int Reviews,int Price,String Genre,String Source,int PurchaseRatio){
-        this.BookName = BookName;
-        this.Author=Author;
-        this.Source = Source;
-        this.Genre = Genre;
-        this.Price = Price;
-        this.UserRating= UserRating;
-        this.PurchaseRatio = PurchaseRatio;
-        this.Reviews = Reviews;
-
-        this.Sno=Sno;
-    }
-
-    public String getBookName() {
-        return BookName;
-    }
-
-    public String getAuthor() {
-        return Author;
-    }
-
-    public String getSource() {
-        return Source;
-    }
-
-    public String getGenre() {
-        return Genre;
-    }
-
-    public float getUserRating() {
-        return UserRating;
-    }
-
-    public float getPrice() {
-        return Price;
-    }
-
-    public int getReviews() {
-        return Reviews;
-    }
-
-    public int getPurchaseRatio() {
-        return PurchaseRatio;
-    }
-
-    public int getSno() {
-        return Sno;
-    }
-
-    public String toString()
-    {
-        return "\n[Sno]: " +this.Sno+" \n[Book Name]: "+this.BookName+ " \n[Author]: "+this.Author+ " \n[User Rating]: "+this.UserRating+ " \n[Reviews]: "+this.Reviews+ " \n[Price]: "+this.Price+ " \n[Genre]: "+this.Genre+ " \n[Source]: "+this.Source+ " \n[Purchase Rate]: "+this.PurchaseRatio + "\n----------------------------------------------------------------------------------------------------------------\n";
-    }
-
-}
 
 class general{
     public HashSet<Node> o=null;
@@ -122,7 +63,7 @@ class general{
                 break;
         }
     }
-    void opt(){
+    void opt(HashSet<Node> o){
         HashSet<Node>book=filter(o);
         recommendSearch(book);
     }
@@ -130,11 +71,11 @@ class general{
         Scanner sc = new Scanner(System.in);
 
         int choice=0;
-        System.out.println("Select One of the Choices: \n(1)Search \n(2)Recommadation\n(3) Display Books \n(4)Back\n(5)Exit");
+        System.out.println("Select One of the Choices: \n(1)Search \n(2)Recommadation\n(3) Display Books \n(4)Back to apply more filters on it\n(5)Back ro Main Menu \n(6)Exit");
         do {
             System.out.print("Enter your choice: ");
             choice = sc.nextInt();
-        } while (choice < 1 || choice > 4);
+        } while (choice < 1 || choice > 6);
         switch (choice) {
             case 1:
                 search(book);
@@ -147,9 +88,12 @@ class general{
                 BAckExit();
                 break;
             case 4:
-                filter(book);
+                opt(book);
                 break;
             case 5:
+                opt(o);
+                break;
+            case 6:
                 System.exit(0);
                 break;
         }
@@ -194,7 +138,7 @@ class general{
                 System.out.println("Total Books of Fiction: " + size);
                 numberofBooks =check(size);
                 book = new HashSet<>();
-                book.addAll(filter.Fiction(o, numberofBooks));
+                book.addAll(filter.Fiction(o));
                 System.out.println();
                 System.out.print(book);
 
@@ -204,7 +148,7 @@ class general{
                 System.out.println("Total Books of Non Fiction: " + size);
                 numberofBooks = check(size);
                 book = new HashSet<>();
-                book.addAll(filter.NonFiction(o, numberofBooks));
+                book.addAll(filter.NonFiction(o));
                 System.out.print(book);
                 break;
             case 3:
@@ -212,7 +156,7 @@ class general{
                 System.out.println("Total Books of Amazon Book: " + size);
                numberofBooks= check(size);
         book = new HashSet<>();
-                book.addAll(filter.SourceAmazon(o, numberofBooks));
+                book.addAll(filter.SourceAmazon(o));
                 System.out.print(book);
                 break;
             case 4:
@@ -220,7 +164,7 @@ class general{
                 System.out.println("Total Books of Urdu Bazar Book: " + size);
                  numberofBooks = check(size);
                 book = new HashSet<>();
-                book.addAll(filter.SourceUrduBazar(o, numberofBooks));
+                book.addAll(filter.SourceUrduBazar(o));
                 System.out.print(book);
                 break;
             case 5:
@@ -228,7 +172,7 @@ class general{
                 System.out.println("Total Books of ZStore Book: " + size);
                 numberofBooks = check(size);
                 book = new HashSet<>();
-                book.addAll(filter.SourceZstore(o, numberofBooks));
+                book.addAll(filter.SourceZstore(o));
                 System.out.print(book);
                 break;
             case 6:
@@ -238,7 +182,7 @@ class general{
                 System.out.println("Total Books of having that rating are : " + size);
                 numberofBooks = check(size);
                 book = new HashSet<>();
-                book.addAll(filter.RatingFilter(o,rating,numberofBooks));
+                book.addAll(filter.RatingFilter(o,rating));
                 System.out.print(book);
                 break;
             case 7:
@@ -246,7 +190,7 @@ class general{
                 System.out.println("Total Books of Both: " + size);
                 numberofBooks = check(size);
                 book = new HashSet<>();
-                book.addAll(filter.Both(o, numberofBooks));
+                book.addAll(filter.Both(o));
                 System.out.print(book);
                 break;
             case 8:
@@ -264,7 +208,7 @@ class general{
             choice = sc.nextInt();
         }while(choice != 1 && choice != 2);
         if(choice==1){
-            opt();
+            opt(o);
         } else if (choice==2) {
             System.exit(0);
         }
@@ -639,7 +583,7 @@ class Search{
 //        return ch;
 //    }
  HashSet<Node> AuthorName(HashSet<Node> root, String str){
-        HashSet<Node> AuthorName=null;
+        HashSet<Node> AuthorName=new HashSet<>();
 
         for (Node node:root){
                 if(node.getAuthor().contains(str)){
@@ -651,7 +595,7 @@ class Search{
         return AuthorName;
  }
     HashSet<Node> BookName(HashSet<Node> root, String str){
-        HashSet<Node> BookName=null;
+        HashSet<Node> BookName=new HashSet<>();
         for (Node node:root){
 
                 if(node.getBookName().contains(str)){
@@ -676,9 +620,7 @@ public class Main {
         String sp2[][] = obj.extract(C);
         String sp[][] = obj.Fi(sp0, sp1, sp2);
         HashSet<Node> o = new HashSet<>();
-        Items[] node = new Items[49];
         for (int j = 0; j < 49; j++) {
-            node[j]= new Items(Integer.parseInt(sp[j][0]),sp[j][1], sp[j][2], Float.parseFloat(sp[j][3]), Integer.parseInt(sp[j][4]), (int)Float.parseFloat(sp[j][5]), sp[j][6], sp[j][7], Integer.parseInt(sp[j][8]));
             o.add(new Node(Integer.parseInt(sp[j][0]), sp[j][1], sp[j][2], Float.parseFloat(sp[j][3]), Integer.parseInt(sp[j][4]), Float.parseFloat(sp[j][5]), sp[j][6], sp[j][7], Integer.parseInt(sp[j][8])));
         }
         int numberofBooks = 0, choice = 0;
@@ -686,7 +628,7 @@ public class Main {
         obj.setO(o);
         System.out.println("---------------------------------------------------------------------------------\n|\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t|\n\t\t\t\t\t\t\t Welcome To BookKeeper\n|\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t|\n---------------------------------------------------------------------------------");
 
-        obj.opt();
+        obj.opt(o);
 
 
     }
